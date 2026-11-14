@@ -1,12 +1,12 @@
 services:
-  flickrdownloader:
-    build:
-      context: .
-    env_file:
-      - .env
-    volumes:
-      - ./photos:/photos
-      - ./config:/root/.config/flickrdownloader
-    restart: unless-stopped
-    command:
-      - watch
+    flickrdownloader:
+        build:
+            context: .
+        env_file:
+            - .env
+        volumes:
+            - /mnt/hdd-pool/buddy-backup/photos/duha:/photos
+            - ./config:/root/.config/flickrdownloader
+        restart: unless-stopped
+        command:
+            - watch

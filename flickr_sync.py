@@ -130,6 +130,19 @@ def save_state(state):
     os.replace(temp, STATE_FILE)
 
 
+def request_user_agent():
+    base = os.environ.get(
+        "DOWNLOAD_USER_AGENT",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:160.0) "
+        "Gecko/20100101 Firefox/160.0",
+    )
+    return re.sub(
+        r"\d+",
+        lambda match: "".join(secrets.choice("0123456789") for _ in match.group()),
+        base,
+    )
+
+
 def download(url, target):
     time.sleep(float(os.environ.get("DOWNLOAD_DELAY", "1")))
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -140,7 +153,16 @@ def download(url, target):
             result = subprocess.run(
                 [
                     "wget", "--no-verbose", "-4", "--timeout=60", "--tries=1",
-                    f"--user-agent={os.environ.get('DOWNLOAD_USER_AGENT', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36')}",
+                    f"--user-agent={request_user_agent()}",
+                    "--header=Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                    "--header=Accept-Language: cs,en-US;q=0.9,en;q=0.8",
+                    "--header=Accept-Encoding: gzip, deflate, br, zstd",
+                    "--header=Connection: keep-alive",
+                    "--header=Upgrade-Insecure-Requests: 1",
+                    "--header=Sec-Fetch-Dest: document",
+                    "--header=Sec-Fetch-Mode: navigate",
+                    "--header=Sec-Fetch-Site: none",
+                    "--header=Sec-Fetch-User: ?1",
                     "-O", temp, url,
                 ],
                 stdout=subprocess.DEVNULL,
