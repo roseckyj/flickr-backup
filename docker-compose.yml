@@ -1,0 +1,12 @@
+services:
+  flickrdownloader:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./photos:/photos
+      - ./config:/root/.config/flickrdownloader
+    restart: unless-stopped
+    command:
+      - watch
